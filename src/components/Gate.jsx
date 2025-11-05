@@ -17,11 +17,12 @@ export default function Gate() {
   const containerRef = useRef(null)
 
   // Ambient chime via WebAudio (no asset files)
-  const audioCtxRef = useRef(null as AudioContext | null)
+  const audioCtxRef = useRef(null)
   const ensureAudio = () => {
     if (!audioCtxRef.current) {
       try {
-        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+        const AC = window.AudioContext || window.webkitAudioContext
+        audioCtxRef.current = AC ? new AC() : null
       } catch (e) {
         // ignore if not supported
       }
@@ -66,7 +67,7 @@ export default function Gate() {
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
-    const handle = (e: MouseEvent) => {
+    const handle = (e) => {
       const rect = el.getBoundingClientRect()
       const x = e.clientX - (rect.left + rect.width / 2)
       const y = e.clientY - (rect.top + rect.height / 2)
